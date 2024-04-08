@@ -30,6 +30,9 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   const existedEmp = await User.findOne({ email });
   if (existedEmp) {
+    if (existedEmp.googleId) {
+      return new ApiError(409, 'Please login with Google');
+    }
     throw new ApiError(409, 'Employee with email or phone number already exists');
   }
   const user = await User.create({
@@ -60,6 +63,9 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Email and password are required');
   }
   const user = await User.findOne({ email });
+  if (user.googleId) {
+    throw new ApiError(401, 'Please login via Google');
+  }
   if (!user) {
     throw new ApiError(404, 'User does not exist');
   }
@@ -103,14 +109,14 @@ const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie('refreshtoken', options)
     .json(new ApiResponse(200, {}, 'User logout succsessfully'));
 });
-const googlePassport = asyncHandler(async (passport) => {
+const googlePassport = asyncHandler(async passport => {
   passport.use(
     new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "https://d8teme-752t.onrender.com/api/v1/google/callback",
-        scope: ["profile", "email"],
+        callbackURL: 'https://d8teme-752t.onrender.com/api/v1/google/callback',
+        scope: ['profile', 'email'],
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
