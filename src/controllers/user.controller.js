@@ -30,7 +30,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   const existedEmp = await User.findOne({ email });
   if (existedEmp) {
-    if (existedEmp.googleId) {
+    if (existedEmp.google_id) {
       return new ApiError(409, 'Please login with Google');
     }
     throw new ApiError(409, 'Employee with email or phone number already exists');
