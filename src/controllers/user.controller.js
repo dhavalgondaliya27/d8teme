@@ -114,6 +114,7 @@ const googlePassport = asyncHandler(async passport => {
         scope: ['profile', 'email'],
       },
       async (accessToken, refreshToken, profile, done) => {
+        console.log(profile);
         try {
           // Save the Google ID and email in the database
           let user = await User.findOne({ google_id: profile.id });
