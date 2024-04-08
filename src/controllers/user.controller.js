@@ -103,27 +103,33 @@ const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie('refreshtoken', options)
     .json(new ApiResponse(200, {}, 'User logout succsessfully'));
 });
-const googlePassport = asyncHandler(async passport => {
+const googlePassport = asyncHandler(async (passport) => {
   passport.use(
     new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        // callbackURL: 'http://localhost:5050/api/v1/google/callback',
-        callbackURL: 'https://d8teme.onrender.com/api/v1/google/callback',
-        scope: ['profile', 'email'],
+        callbackURL: "https://d8teme-752t.onrender.com/api/v1/google/callback",
+        scope: ["profile", "email"],
       },
       async (accessToken, refreshToken, profile, done) => {
-        console.log(profile);
         try {
-          // Save the Google ID and email in the database
           let user = await User.findOne({ google_id: profile.id });
           if (!user) {
-            user = await User.create({
-              google_id: profile.id,
-              email: profile.emails[0].value,
-              valid_email: true,
-            });
+            // Check if the user exists by email
+            user = await User.findOne({ email: profile.emails[0].value });
+            if (user) {
+              // If user exists, add the Google ID to the existing user document
+              user.google_id = profile.id;
+              await user.save();
+            } else {
+              // If user does not exist, create a new user
+              user = await User.create({
+                google_id: profile.id,
+                email: profile.emails[0].value,
+                valid_email: true,
+              });
+            }
             await generateAccessAndRefereshTokens(user._id);
           }
           done(null, user);
@@ -186,6 +192,7 @@ const facebookPassport = asyncHandler(async passport => {
     cb(null, user);
   });
 });
+
 const verifyEmail = asyncHandler(async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
