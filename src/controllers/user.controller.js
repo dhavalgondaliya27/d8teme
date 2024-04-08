@@ -63,9 +63,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Email and password are required');
   }
   const user = await User.findOne({ email });
-  if (user.googleId) {
-    throw new ApiError(401, 'Please login via Google');
-  }
+  
   if (!user) {
     throw new ApiError(404, 'User does not exist');
   }
