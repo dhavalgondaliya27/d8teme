@@ -1,12 +1,12 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { User } from "../models/user.model.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { Strategy as GoogleStrategy } from "passport-google-oauth2";
-import sendEmail from "../middlewares/verify_email.js";
-import sendSMS from "../middlewares/verify_phone.js";
-import { Strategy as FacebookStrategy } from "passport-facebook";
-const generateAccessAndRefereshTokens = async (userId) => {
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { ApiError } from '../utils/ApiError.js';
+import { User } from '../models/user.model.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import sendEmail from '../middlewares/verify_email.js';
+import sendSMS from '../middlewares/verify_phone.js';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
+const generateAccessAndRefereshTokens = async userId => {
   try {
     const user = await User.findById(userId);
     const accessToken = user.generateAccessToken();
@@ -15,50 +15,33 @@ const generateAccessAndRefereshTokens = async (userId) => {
     await user.save({ validateBeforeSave: false });
     return { accessToken, refreshToken };
   } catch (error) {
-    throw new ApiError(
-      500,
-      "Something went wrong while generating referesh and access token"
-    );
+    throw new ApiError(500, 'Something went wrong while generating referesh and access token');
   }
 };
 const registerUser = asyncHandler(async (req, res) => {
   const { email, password, confirmPassword } = req.body;
   // Check if any field is empty
-  if (
-    [email, password, confirmPassword].some((field) => field?.trim() === "")
-  ) {
-    throw new ApiError(400, "All fields are required");
+  if ([email, password, confirmPassword].some(field => field?.trim() === '')) {
+    throw new ApiError(400, 'All fields are required');
   }
   // Check if password and confirm password match
   if (password !== confirmPassword) {
-    throw new ApiError(400, "Passwords do not match");
+    throw new ApiError(400, 'Passwords do not match');
   }
   const existedEmp = await User.findOne({ email });
   if (existedEmp) {
-    throw new ApiError(
-      409,
-      "Employee with email or phone number already exists"
-    );
+    throw new ApiError(409, 'Employee with email or phone number already exists');
   }
   const user = await User.create({
     email,
     password,
   });
-  const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken"
-  );
+  const createdUser = await User.findById(user._id).select('-password -refreshToken');
   if (!createdUser) {
-    throw new ApiError(
-      500,
-      "Something went wrong while registering the Employee"
-    );
+    throw new ApiError(500, 'Something went wrong while registering the Employee');
   }
-  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
-    user._id
-  );
-  const loggedInUser = await User.findById(user._id).select(
-    "-password -refreshToken"
-  );
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
+  const loggedInUser = await User.findById(user._id).select('-password -refreshToken');
   return res.json(
     new ApiResponse(
       200,
@@ -66,7 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
         user: loggedInUser,
         accessToken,
       },
-      "User register successfully"
+      'User register successfully'
     )
   );
 });
@@ -74,20 +57,18 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   console.log(email);
   if (!email || !password) {
-    throw new ApiError(400, "Email and password are required");
+    throw new ApiError(400, 'Email and password are required');
   }
   const user = await User.findOne({ email });
   if (!user) {
-    throw new ApiError(404, "User does not exist");
+    throw new ApiError(404, 'User does not exist');
   }
   const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid credentials");
+    throw new ApiError(401, 'Invalid credentials');
   }
-  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
-    user._id
-  );
-  const loggedInUser = await User.findById(user._id).select("-password");
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
+  const loggedInUser = await User.findById(user._id).select('-password');
   return res.json(
     new ApiResponse(
       200,
@@ -95,15 +76,13 @@ const loginUser = asyncHandler(async (req, res) => {
         user: loggedInUser,
         accessToken,
       },
-      "User logged in successfully"
+      'User logged in successfully'
     )
   );
 });
 const logoutUser = asyncHandler(async (req, res) => {
   if (!req.user) {
-    return res
-      .status(401)
-      .json(new ApiResponse(401, {}, "User not authenticated"));
+    return res.status(401).json(new ApiResponse(401, {}, 'User not authenticated'));
   }
   await User.findByIdAndUpdate(
     req.user._id,
@@ -120,18 +99,19 @@ const logoutUser = asyncHandler(async (req, res) => {
   };
   return res
     .status(200)
-    .clearCookie("accesstoken", options)
-    .clearCookie("refreshtoken", options)
-    .json(new ApiResponse(200, {}, "User logout succsessfully"));
+    .clearCookie('accesstoken', options)
+    .clearCookie('refreshtoken', options)
+    .json(new ApiResponse(200, {}, 'User logout succsessfully'));
 });
-const googlePassport = asyncHandler(async (passport) => {
+const googlePassport = asyncHandler(async passport => {
   passport.use(
     new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:5050/api/v1/google/callback",
-        scope: ["profile", "email"],
+        // callbackURL: 'http://localhost:5050/api/v1/google/callback',
+        callbackURL: 'https://d8teme.onrender.com/api/v1/google/callback',
+        scope: ['profile', 'email'],
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -163,22 +143,22 @@ const googlePassport = asyncHandler(async (passport) => {
     done(null, user);
   });
 });
-const facebookPassport = asyncHandler(async (passport) => {
+const facebookPassport = asyncHandler(async passport => {
   passport.use(
     new FacebookStrategy(
       {
         clientID: process.env.FACEBOOK_CLIENT_ID,
         clientSecret: process.env.FACEBOOK_SECRET_KEY,
-        callbackURL: "http://localhost:5050/api/v1/facebook/callback",
-        scope: ["email"],
-        profileFields: ["id", "displayName", "emails"],
+        callbackURL: 'http://localhost:5050/api/v1/facebook/callback',
+        scope: ['email'],
+        profileFields: ['id', 'displayName', 'emails'],
       },
       async function (accessToken, refreshToken, profile, cb) {
         try {
           console.log(profile);
-          const user = await User.findOne({ facebook_id: profile.id});
+          const user = await User.findOne({ facebook_id: profile.id });
           if (!user) {
-            console.log("Adding new Facebook user to DB..");
+            console.log('Adding new Facebook user to DB..');
             const newUser = new User({
               facebook_id: profile.id,
               email: profile.emails ? profile.emails[0].value : null,
@@ -187,7 +167,7 @@ const facebookPassport = asyncHandler(async (passport) => {
             await newUser.save();
             return cb(null, newUser);
           } else {
-            console.log("Facebook User already exists in DB..");
+            console.log('Facebook User already exists in DB..');
             return cb(null, user);
           }
         } catch (err) {
@@ -209,7 +189,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      throw new ApiError(404, "User does not exist");
+      throw new ApiError(404, 'User does not exist');
     }
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     // Save the OTP in the database
@@ -217,21 +197,21 @@ const verifyEmail = asyncHandler(async (req, res) => {
     await user.save();
     // Send the OTP email
     sendEmail(user.email, otp);
-    return res.json({ message: "OTP sent successfully" });
+    return res.json({ message: 'OTP sent successfully' });
   } catch (error) {
-    console.error("Error validating email:", error);
-    throw new ApiError(500, "Internal server error");
+    console.error('Error validating email:', error);
+    throw new ApiError(500, 'Internal server error');
   }
 });
 const isValidate = asyncHandler(async (req, res) => {
   const { otp } = req.body;
   const user = req.user;
   if (!user) {
-    throw new ApiError(401, "User not authenticated");
+    throw new ApiError(401, 'User not authenticated');
   }
   const usercheck = await User.findOne({ _id: user._id });
   if (!usercheck) {
-    throw new ApiError(404, "User not found");
+    throw new ApiError(404, 'User not found');
   }
   if (parseInt(otp) === parseInt(usercheck.otp)) {
     // Clear the OTP in the database
@@ -244,18 +224,18 @@ const isValidate = asyncHandler(async (req, res) => {
         {
           usercheck,
         },
-        "User logged in successfully"
+        'User logged in successfully'
       )
     );
   } else {
-    throw new ApiError(400, "Invalid OTP");
+    throw new ApiError(400, 'Invalid OTP');
   }
 });
 const verifyPhoneNumber = asyncHandler(async (req, res) => {
   const { phone } = req.body;
   const user = await User.findById(req.user._id);
   if (!user) {
-    throw new ApiError(404, "User does not exist");
+    throw new ApiError(404, 'User does not exist');
   }
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   // Save the OTP in the database
@@ -263,7 +243,7 @@ const verifyPhoneNumber = asyncHandler(async (req, res) => {
   user.otp = otp;
   await user.save();
   await sendSMS(phone, otp);
-  return res.json({ message: "OTP sent successfully" });
+  return res.json({ message: 'OTP sent successfully' });
 });
 const isPhoneNumberValid = asyncHandler(async (req, res) => {
   const { otp } = req.body;
@@ -283,11 +263,11 @@ const isPhoneNumberValid = asyncHandler(async (req, res) => {
         {
           usercheck,
         },
-        "User phone number verified successfully"
+        'User phone number verified successfully'
       )
     );
   }
-  throw new ApiError(400, "Invalid Phone Number OTP");
+  throw new ApiError(400, 'Invalid Phone Number OTP');
 });
 export {
   registerUser,
