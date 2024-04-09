@@ -53,6 +53,8 @@ const createUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, error);
   }
 });
+
+
 const updateUserDetails = asyncHandler(async (req, res) => {
   const { firstname, lastname, DOB, gender, show_me, looking_for, Passions, Sexuality } = req.body;
   //    console.log(req.body);
