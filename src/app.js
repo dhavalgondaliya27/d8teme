@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 });
 app.use(
   session({
-    secret: 'bhavinkarena',
+    secret: 'Dhaval Gondaliya',
     resave: false,
     saveUninitialized: false,
   })
