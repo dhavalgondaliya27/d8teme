@@ -134,7 +134,7 @@ const googlePassport = asyncHandler(async passport => {
                 valid_email: true,
               });
             }
-            await generateAccessAndRefereshTokens(user._id);
+          const {accessToken,refreshToken} =   await generateAccessAndRefereshTokens(user._id);
           }
           done(null, user);
         } catch (err) {
