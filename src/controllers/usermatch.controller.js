@@ -50,6 +50,7 @@ const sendRequest = asyncHandler(async (req, res) => {
 const acceptRequest = asyncHandler(async (req, res) => {
   const { requestId } = req.body; // Assuming requestId is the ID of the friend request to be accepted
   const recipientId = await UserProfile.find({ userID: req.user._id });
+  
   try {
     // Find the friend request by ID
     const friendRequest = await userMatch.findById(requestId);
