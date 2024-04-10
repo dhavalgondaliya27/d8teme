@@ -18,7 +18,9 @@ const createUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, 'Employee with email or phone number already exists');
       }
       let profileImageUrls = [];
+      console.log("cdvdvdv",req.files);
       if (req.files) {
+
         const files = req.files;
         for (const file of files) {
           const coverImageLocalPath = file.path;
