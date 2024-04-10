@@ -57,6 +57,6 @@ app.use("/api/v4", requestRouter);
 import postRouter from "./routes/post.route.js";
 app.use("/api/v5", postRouter);
 //comment route import
-import commentRouter from "./routes/comment.route.js";
+import commentRouter from "./routes/comment.routes.js";
 app.use("/api/v6", commentRouter);
 export { app };
