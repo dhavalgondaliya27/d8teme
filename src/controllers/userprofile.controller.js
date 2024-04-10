@@ -8,7 +8,7 @@ const createUser = asyncHandler(async (req, res) => {
   try {
     if (req.user.valid_email === true) {
       const userID = req.user._id;
-      const { firstname, lastname, DOB, gender, show_me, looking_for, Passions, Sexuality } =
+      const { firstname, lastname, DOB, gender, show_me, profileImage, looking_for, Passions, Sexuality } =
         req.body;
       const user = await User.findOne(req.user._id);
       const existedUser = await UserProfile.findOne({
@@ -19,9 +19,10 @@ const createUser = asyncHandler(async (req, res) => {
       }
       let profileImageUrls = [];
       console.log("cdvdvdv",req.files);
-      if (req.files) {
+      console.log("Gand",profileImage);
+      if (profileImage) {
 
-        const files = req.files;
+        const files = profileImage;
         for (const file of files) {
           const coverImageLocalPath = file.path;
           const profileimage = await uploadOnCloudinary(coverImageLocalPath);
