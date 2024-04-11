@@ -35,6 +35,8 @@ app.use(
       "https://d8teme-752t.onrender.com/api/v1/google",
       "https://d8teme-752t.onrender.com/api/v1/google/callback",
       "https://d8teme-752t.onrender.com/",
+      "https://accounts.google.com",
+      "https://accounts.google.com/o/oauth2/v2/auth",
     ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
