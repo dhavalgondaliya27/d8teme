@@ -53,3 +53,5 @@ Dockerfile*
 .DS_Store
 Thumbs.db
 ehthumbs.db
+
+d8teme-express-ec2.pem
