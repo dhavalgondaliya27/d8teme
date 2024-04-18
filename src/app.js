@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.get('/', (req, res) => {
-  res.send('D8teme');
+  res.send('D8teme is dating app');
 });
 googlePassport(passport);
 facebookPassport(passport);
