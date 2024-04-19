@@ -6,7 +6,6 @@ import session from 'express-session';
 import { facebookPassport, googlePassport } from './controllers/user.controller.js';
 const app = express();
 
-
 app.use(
   session({
     secret: 'bhavinkarena',
@@ -30,7 +29,7 @@ app.use(
     origin: [
       'http://localhost:3000',
       'https://d8teme-752t.onrender.com',
-      'https://d8tome.vercel.app',
+      'https://d8teme.vercel.app',
       'https://d8teme.onrender.com',
       'https://d8teme.onrender.com/',
       'http://ec2-3-109-160-87.ap-south-1.compute.amazonaws.com/api/v1/google/callback',
@@ -44,7 +43,6 @@ app.use(
   })
 );
 app.options('*', cors());
-
 
 //user routes import
 import UserRouter from './routes/user.route.js';
