@@ -139,7 +139,7 @@ const googlePassport = asyncHandler(async (passport) => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://ec2-3-109-160-87.ap-south-1.compute.amazonaws.com/api/v1/google/callback",
+        callbackURL: "https://d8teme.strangled.net/api/v1/google/callback",
         scope: ["profile", "email"],
       },
       async (accessToken, refreshToken, profile, done) => {
