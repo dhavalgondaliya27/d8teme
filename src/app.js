@@ -36,6 +36,8 @@ app.use(
       'https://d8teme.strangled.net/api/v1/google/callback',
       'https://d8teme-752t.onrender.com/',
       'https://accounts.google.com',
+      'https://d8teme-delta.vercel.app/',
+      'https://d8teme-delta.vercel.app',
       'https://accounts.google.com/o/oauth2/v2/auth',
       'http://d8teme-frontend.s3-website.ap-south-1.amazonaws.com'
     ],
