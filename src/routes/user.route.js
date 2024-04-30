@@ -34,7 +34,7 @@ userRouter.get(
 );
 userRouter.get(
   "/facebook",
-  passport.authenticate("facebook", { scope: ["profile", "email"] })
+  passport.authenticate("facebook", { scope: ["email"] })
 );
 userRouter.get(
   "/facebook/callback",

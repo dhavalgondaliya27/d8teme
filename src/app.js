@@ -20,10 +20,10 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.get('/', (req, res) => {
   res.send('D8teme is dating app');
 });
-googlePassport(passport);
-facebookPassport(passport);
 app.use(passport.initialize());
 app.use(passport.session());
+googlePassport(passport);
+facebookPassport(passport);
 app.use(
   cors({
     origin: [

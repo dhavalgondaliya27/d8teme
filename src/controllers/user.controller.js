@@ -188,9 +188,10 @@ const facebookPassport = asyncHandler(async (passport) => {
       {
         clientID: process.env.FACEBOOK_CLIENT_ID,
         clientSecret: process.env.FACEBOOK_SECRET_KEY,
-        callbackURL: "http://localhost:5050/api/v1/facebook/callback",
+        callbackURL: "https://d8teme.strangled.net/api/v1/facebook/callback",
         scope: ["email"],
         profileFields: ["id", "displayName", "emails"],
+        enableProof: true,
       },
       async function (accessToken, refreshToken, profile, cb) {
         try {
