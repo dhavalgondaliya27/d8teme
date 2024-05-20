@@ -39,7 +39,9 @@ app.use(
       'https://d8teme-delta.vercel.app/',
       'https://d8teme-delta.vercel.app',
       'https://accounts.google.com/o/oauth2/v2/auth',
-      'http://d8teme-frontend.s3-website.ap-south-1.amazonaws.com'
+      'http://d8teme-frontend.s3-website.ap-south-1.amazonaws.com',
+      'https://main.d8wn5rlfbvy2i.amplifyapp.com/',
+      'https://main.d8wn5rlfbvy2i.amplifyapp.com'
     ],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
